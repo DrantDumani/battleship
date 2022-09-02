@@ -1,4 +1,4 @@
-function createShip(length, startInd) {
+function createShip(startInd, length = 4) {
   const shipArr = [];
   for (let i = 0; i < length; i++) {
     shipArr[i] = startInd + i;
