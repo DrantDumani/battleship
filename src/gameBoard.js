@@ -11,7 +11,7 @@ function createGameBoard() {
   const placeShip = (coords, fn, len = 4) => {
     const [y, x] = coords;
     if (x > 9 || y > 9) {
-      return "Index out of bounds";
+      throw new Error("Index out of bounds");
     }
     const index = oneDimIndex(y, x);
     gameBoardShips.push(fn(index, len));
