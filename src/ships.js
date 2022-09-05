@@ -1,19 +1,18 @@
-function createShip(startInd, length = 4) {
-  const shipArr = [];
+function createShip(startInd, length) {
+  const hitIndices = [];
+  const shipIndices = [];
   for (let i = 0; i < length; i++) {
-    shipArr[i] = startInd + i;
+    shipIndices[i] = startInd + i;
   }
 
   const hit = (num) => {
-    const index = shipArr.indexOf(num);
-    if (index === -1) {
-      return false;
-    }
-    shipArr[index] = "hit";
-    return true;
+    const index = shipIndices.indexOf(num);
+    const hitTile = shipIndices.splice(index, 1)[0];
+    hitIndices.push(hitTile);
   };
 
-  const isSunk = () => shipArr.every((el) => el === "hit");
+  const isSunk = () => hitIndices.length === length;
+
   return { hit, isSunk };
 }
 
