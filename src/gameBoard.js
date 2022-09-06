@@ -1,49 +1,53 @@
 function createGameBoard() {
   const board = [];
-  for (let y = 0; y < 10; y++) {
-    for (let x = 0; x < 10; x++) {
-      board[y] = x;
-    }
+  const ships = [];
+  const attackedIndices = {};
+  for (let i = 0; i < 100; i++) {
+    board[i] = false;
   }
 
-  const oneDimIndex = (y, x) => y * 10 + x;
+  const getBoardArr = () => board;
 
-  const placeShip = (coords, fn, len = 4) => {
-    const [y, x] = coords;
-    if (x > 9 || y > 9) {
-      throw new Error("Index out of bounds");
+  const placeShip = (index, length, shipFn) => {
+    if (
+      index > 99 ||
+      index < 0 ||
+      Math.floor(index / 10) !== Math.floor((index + length) / 10)
+    ) {
+      throw new Error(
+        "Horizontal ship positions cannot be placed off the board"
+      );
     }
-    const index = oneDimIndex(y, x);
-    gameBoardShips.push(fn(index, len));
+    const ship = shipFn(index, length);
+    for (let i = index; i < index + length; i++) {
+      board[i] = ship;
+    }
+    ships.push(ship);
   };
 
-  const gameBoardShips = [];
-  const getShips = () => gameBoardShips;
+  const getAttackedIndices = () => attackedIndices;
 
-  const attackedTiles = [];
-  const getAttackedTiles = () => attackedTiles;
-
-  const receiveAttack = (coord) => {
-    const [y, x] = coord;
-    const index = oneDimIndex(y, x);
-    if (attackedTiles.includes(index)) {
-      return;
+  const receiveAttack = (index) => {
+    if (attackedIndices[index] !== undefined) {
+      throw new Error("Cannot attack the same tile twice");
     }
-    attackedTiles.push(index);
-    for (const ship of gameBoardShips) {
-      if (ship.hit(index)) {
-        return true;
-      }
+    const ship = board[index];
+    if (ship) {
+      ship.hit(index);
     }
-    return false;
+    const hit = !!board[index];
+    attackedIndices[index] = hit;
   };
 
-  const allShipsSunk = () => {
-    const shipStatuses = gameBoardShips.map((ship) => ship.isSunk());
-    return shipStatuses.every((status) => status === true);
-  };
+  const allShipsSunk = () => ships.every((ship) => ship.isSunk());
 
-  return { placeShip, getShips, receiveAttack, allShipsSunk, getAttackedTiles };
+  return {
+    getBoardArr,
+    placeShip,
+    getAttackedIndices,
+    receiveAttack,
+    allShipsSunk
+  };
 }
 
 export default createGameBoard;

@@ -1,60 +1,71 @@
 import createShip from "../ships";
 import createGameBoard from "../gameBoard";
 
-test("Gameboard receives valid index and places ship on the board", () => {
+test("Gameboard can place ships at specific indices.", () => {
   const testBoard = createGameBoard();
-  testBoard.placeShip([0, 3], createShip, 4);
-
-  expect(testBoard.getShips().length).toBe(1);
+  const board = testBoard.getBoardArr();
+  expect(board[13]).toBe(false);
+  testBoard.placeShip(13, 2, createShip);
+  expect(board[13]).toEqual(expect.any(Object));
 });
 
-test("Gameboard receives invalid index and throws an error", () => {
+test("Ships cannot overlap each other or have any indices placed off the board", () => {
   const testBoard = createGameBoard();
   expect(() => {
-    testBoard.placeShip([11, 4], createShip, 4);
-  }).toThrow();
+    testBoard.placeShip(101, 1, createShip);
+  }).toThrow(/Horizontal ship positions cannot be placed off the board/);
+  expect(() => {
+    testBoard.placeShip(19, 3, createShip);
+  }).toThrow(/Horizontal ship positions cannot be placed off the board/);
 });
 
-test("Gameboard receives attack coords and hits a ship.", () => {
+test("Gameboard can receive attacks and determine whether a ship was hit or not", () => {
   const testBoard = createGameBoard();
-  testBoard.placeShip([9, 4], createShip, 4);
-  expect(testBoard.receiveAttack([9, 6])).toBe(true);
+  testBoard.placeShip(4, 3, createShip);
+  testBoard.placeShip(14, 2, createShip);
+  const testShip1 = testBoard.getBoardArr()[4];
+  const testShip2 = testBoard.getBoardArr()[14];
+  const shipSpy1 = jest.spyOn(testShip1, "hit");
+  const shipSpy2 = jest.spyOn(testShip2, "hit");
+
+  testBoard.receiveAttack(0);
+  expect(shipSpy1).not.toBeCalled();
+  expect(shipSpy2).not.toBeCalled();
+
+  testBoard.receiveAttack(4);
+  expect(shipSpy1).toBeCalled();
+  expect(shipSpy2).not.toBeCalled();
+  shipSpy1.mockClear();
+
+  testBoard.receiveAttack(15);
+  expect(shipSpy1).not.toBeCalled();
+  expect(shipSpy2).toBeCalled();
 });
 
-test("Gameboard receives attack coords and misses every ship.", () => {
+test("Gameboard logs all successful and unsuccessful attacks a player makes", () => {
   const testBoard = createGameBoard();
-  testBoard.placeShip([9, 4], createShip, 4);
-  testBoard.placeShip([3, 7], createShip, 2);
-  expect(testBoard.receiveAttack([9, 8])).toBe(false);
+  expect(testBoard.getAttackedIndices()).toEqual({});
+  testBoard.receiveAttack(80);
+  expect(testBoard.getAttackedIndices()).toEqual({ 80: false });
+  testBoard.placeShip(50, 2, createShip);
+  testBoard.receiveAttack(51);
+  expect(testBoard.getAttackedIndices()).toEqual({ 80: false, 51: true });
 });
 
-test("Gameboard sees that all ships have been sunk", () => {
+test("Players cannot attack a tile that has been previously attacked", () => {
   const testBoard = createGameBoard();
-  testBoard.placeShip([9, 4], createShip, 1);
-  testBoard.receiveAttack([9, 4]);
-  expect(testBoard.allShipsSunk()).toBe(true);
+  testBoard.receiveAttack(10);
+  expect(() => {
+    testBoard.receiveAttack(10);
+  }).toThrow(/Cannot attack the same tile twice/);
 });
 
-test("Gameboard checks for sunken ships and sees that some of them haven't sunk yet.", () => {
+test("Gameboard can tell when all of its ships have been sunk.", () => {
   const testBoard = createGameBoard();
-  testBoard.placeShip([9, 4], createShip, 1);
-  testBoard.placeShip([5, 4], createShip, 4);
-  testBoard.receiveAttack([9, 4]);
+  testBoard.placeShip(21, 2, createShip);
   expect(testBoard.allShipsSunk()).toBe(false);
-});
-
-test("Make sure that Gameboard is recording previously attacked tiles", () => {
-  const testBoard = createGameBoard();
-  testBoard.receiveAttack([8, 2]);
-  testBoard.receiveAttack([9, 6]);
-  testBoard.receiveAttack([0, 7]);
-  expect(testBoard.getAttackedTiles()).toEqual([82, 96, 7]);
-});
-
-test("Gameboard does not allow you to attack the same tile more than once", () => {
-  const testBoard = createGameBoard();
-  testBoard.receiveAttack([5, 4]);
-  testBoard.receiveAttack([5, 4]);
-  testBoard.receiveAttack([5, 4]);
-  expect(testBoard.getAttackedTiles()).toEqual([54]);
+  testBoard.receiveAttack(21);
+  expect(testBoard.allShipsSunk()).toBe(false);
+  testBoard.receiveAttack(22);
+  expect(testBoard.allShipsSunk()).toBe(true);
 });
