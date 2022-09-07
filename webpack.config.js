@@ -13,12 +13,14 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/index.html",
-      title: "Battleship!"
+      title: "Battleship!",
+      favicon: "./src/assets/images/Battleship_sprite.png"
     })
   ],
   output: {
     filename: "[name].js",
     path: path.resolve(__dirname, "dist"),
+    assetModuleFilename: "assets/[hash][ext][query]",
     clean: true
   },
   optimization: {
@@ -32,7 +34,10 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: "asset/resource"
+        type: "asset/resource",
+        generator: {
+          filename: "assets/[hash][ext][query]"
+        }
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
