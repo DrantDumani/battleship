@@ -1,0 +1,22 @@
+$grid-tile-dim: 30px;
+
+.game-boards-container {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  text-align: center;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(10, $grid-tile-dim);
+  grid-template-rows: repeat(10, $grid-tile-dim);
+}

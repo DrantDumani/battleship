@@ -3,6 +3,7 @@ function renderGameBoard(gameLoop, container, type) {
 
   for (let i = 0; i < 100; i++) {
     const btn = document.createElement("button");
+    btn.classList.add("game-tile");
     if (plyrBoard[i] === undefined) {
       btn.classList.add("blank-tile");
     } else if (type === "activePlayer") {
