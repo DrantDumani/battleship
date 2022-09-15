@@ -5,6 +5,8 @@ function createShip(startInd, length) {
     shipIndices[i] = startInd + i;
   }
 
+  const getShipLocation = () => shipIndices;
+
   const hit = (num) => {
     const index = shipIndices.indexOf(num);
     const hitTile = shipIndices.splice(index, 1)[0];
@@ -13,7 +15,7 @@ function createShip(startInd, length) {
 
   const isSunk = () => hitIndices.length === length;
 
-  return { hit, isSunk };
+  return { hit, isSunk, getShipLocation };
 }
 
 export default createShip;

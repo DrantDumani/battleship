@@ -21,7 +21,7 @@ test("The game ends once all the ships on a player's board have been sunk", () =
   expect(secondGameState).toBe("game over");
 });
 
-test("If applicable, the CPU will make a random on their turn. The turn then passes to the human player", () => {
+test("If applicable, the CPU will make a random move on their turn. The turn then passes to the human player", () => {
   const gameLoop = initGameLoop(createGameBoard, createShip, createPlayer);
   const cpuPlayer = gameLoop.getAllPlyrInfo()[1];
   expect(cpuPlayer.type).toBe("CPU");
@@ -32,37 +32,3 @@ test("If applicable, the CPU will make a random on their turn. The turn then pas
   gameLoop.takeTurn(50);
   expect(CPUspy).toHaveBeenCalledTimes(2);
 });
-
-// test("Current player swaps every turn", () => {
-//     const gameLoop = initGameLoop(createGameBoard, createShip, createPlayer);
-//     const plyrTurn1 = gameLoop.getCurrentPlayer();
-//     gameLoop.takeTurn(0);
-//     const plyrTurn2 = gameLoop.getCurrentPlayer();
-//     expect(plyrTurn1).not.toBe(plyrTurn2);
-//     gameLoop.takeTurn(5);
-//     const plyrTurn3 = gameLoop.getCurrentPlayer();
-//     expect(plyrTurn1).toBe(plyrTurn3);
-//     gameLoop.takeTurn(10);
-//     const plyrTurn4 = gameLoop.getCurrentPlayer();
-//     expect(plyrTurn2).toBe(plyrTurn4);
-//   });
-
-//   test("Defending board swaps every turn once it is attacked", () => {
-//     const gameLoop = initGameLoop(createGameBoard, createShip, createPlayer);
-//     const boardTurn1 = gameLoop.getDefendingBoard();
-//     gameLoop.takeTurn(99);
-//     const boardTurn2 = gameLoop.getDefendingBoard();
-//     expect(boardTurn1).not.toBe(boardTurn2);
-//     expect(boardTurn1.getAttackedIndices()).toEqual({ 99: false });
-//     expect(boardTurn2.getAttackedIndices()).toEqual({});
-//     gameLoop.takeTurn(90);
-//     const boardTurn3 = gameLoop.getDefendingBoard();
-//     expect(boardTurn1).toBe(boardTurn3);
-//     expect(boardTurn1.getAttackedIndices()).toEqual({ 99: false });
-//     expect(boardTurn2.getAttackedIndices()).toEqual({ 90: false });
-//     gameLoop.takeTurn(80);
-//     const boardTurn4 = gameLoop.getDefendingBoard();
-//     expect(boardTurn2).toBe(boardTurn4);
-//     expect(boardTurn1.getAttackedIndices()).toEqual({ 99: false, 80: false });
-//     expect(boardTurn2.getAttackedIndices()).toEqual({ 90: false });
-//   });
