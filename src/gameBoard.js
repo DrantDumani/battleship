@@ -7,6 +7,7 @@ function createGameBoard() {
   }
 
   const getBoardArr = () => board;
+  const getShips = () => ships;
 
   const placeShip = (index, length, shipFn) => {
     if (
@@ -43,6 +44,7 @@ function createGameBoard() {
 
   return {
     getBoardArr,
+    getShips,
     placeShip,
     getAttackedIndices,
     receiveAttack,
