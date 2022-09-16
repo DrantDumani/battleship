@@ -8,7 +8,6 @@ import createPlayer from "../player";
 import createShip from "../ships";
 import {
   renderGameBoard,
-  displayAttack,
   displayShipInfo,
   displayVictory,
   disableGameInput
@@ -43,7 +42,8 @@ test("DOM method populates gameboard element with 100 buttons", () => {
   const pBoard = testContainer.querySelector(".player1-board > .board-grid");
   expect(pBoard.querySelectorAll("button").length).toBe(0);
   const testLoop = initGameLoop(createGameBoard, createShip, createPlayer);
-  renderGameBoard(testLoop, pBoard);
+  const plyrBoard = testLoop.getAllBoardInfo()[0];
+  renderGameBoard(plyrBoard, pBoard, true);
   expect(pBoard.querySelectorAll("button").length).toBe(100);
 });
 
@@ -51,71 +51,16 @@ test("Active players' boards' buttons are assigned classes based on ship placeme
   const testContainer = createDummyDOM();
   const pBoard = testContainer.querySelector(".player1-board > .board-grid");
   const testLoop = initGameLoop(createGameBoard, createShip, createPlayer);
-  renderGameBoard(testLoop, pBoard, "activePlayer");
-  const plyrBoard = testLoop.getAllBoardInfo()[0];
+  const plyrBoardObj = testLoop.getAllBoardInfo()[0];
+  const plyrBoard = plyrBoardObj.getBoardArr();
+  renderGameBoard(plyrBoardObj, pBoard, true);
   const boardTiles = pBoard.querySelectorAll("button");
   for (let i = 0; i < boardTiles.length; i++) {
-    if (plyrBoard[i] === undefined) {
+    if (!plyrBoard[i]) {
       expect(boardTiles[i].classList.contains("blank-tile")).toBe(true);
     } else if (typeof plyrBoard[i] === "object") {
       expect(boardTiles[i].classList.contains("ship-segment")).toBe(true);
     }
-  }
-});
-
-test("Clicking a tile on the defending board should make an attack on that tile", () => {
-  const testContainer = createDummyDOM();
-  const defendingDOMBoard = testContainer.querySelector(
-    ".player2-board > .board-grid"
-  );
-
-  const testLoop = initGameLoop(createGameBoard, createShip, createPlayer);
-  renderGameBoard(testLoop, defendingDOMBoard);
-  const gameButtons = defendingDOMBoard.querySelectorAll("button");
-  gameButtons.forEach((btn) =>
-    btn.addEventListener("click", (e) => {
-      displayAttack(e.target, testLoop);
-    })
-  );
-
-  const defendingGameBoard = testLoop.getDefendingBoard();
-  const testIndex = Math.floor(Math.random() * gameButtons.length);
-  const defendingTileZero =
-    defendingDOMBoard.querySelectorAll("button")[testIndex];
-  testLoop.takeTurn(testIndex);
-  defendingTileZero.click();
-  const attackedTiles = defendingGameBoard.getAttackedIndices();
-  const enemyBoardArr = defendingGameBoard.getBoardArr();
-  if (enemyBoardArr[testIndex] === undefined) {
-    expect(attackedTiles[testIndex]).toBe(false);
-  } else if (typeof enemyBoardArr[testIndex] === "object") {
-    expect(attackedTiles[testIndex]).toBe(true);
-  }
-});
-
-test("Buttons are disabled after they're clicked. A class is added depending on if a ship existed on that tile or not", () => {
-  const testContainer = createDummyDOM();
-  const defendingDOMBoard = testContainer.querySelector(
-    ".player2-board > .board-grid"
-  );
-  const testLoop = initGameLoop(createGameBoard, createShip, createPlayer);
-  renderGameBoard(testLoop, defendingDOMBoard);
-  const gameButtons = defendingDOMBoard.querySelectorAll("button");
-  gameButtons.forEach((btn) =>
-    btn.addEventListener("click", (e) => {
-      displayAttack(e.target, testLoop);
-    })
-  );
-  const testIndex = Math.floor(Math.random() * gameButtons.length);
-  const randomBtn = gameButtons[testIndex];
-  expect(randomBtn.disabled).toBe(false);
-  randomBtn.click();
-  expect(randomBtn.disabled).toBe(true);
-  const hitTile = testLoop.getAllBoardInfo()[1].getAttackedIndices()[testIndex];
-  if (hitTile) {
-    expect(randomBtn.classList.contains("hit-ship")).toBe(true);
-  } else {
-    expect(randomBtn.classList.contains("missed-attack")).toBe(true);
   }
 });
 
@@ -137,10 +82,11 @@ test("The game will always display how many ships a player has remaining.", () =
 test("The game stops taking input and declares a victor when the game is over", () => {
   const testContainer = createDummyDOM();
   const testLoop = initGameLoop(createGameBoard, createShip, createPlayer);
+  const enemyBoardObj = testLoop.getDefendingBoard();
   const enemyBoard = testContainer.querySelector(
     ".player2-board > .board-grid"
   );
-  renderGameBoard(testLoop, enemyBoard);
+  renderGameBoard(enemyBoardObj, enemyBoard);
   const enemyBtns = Array.from(enemyBoard.querySelectorAll("button"));
   const gameStatus = testContainer.querySelector(".current-turn-status");
   const enemyShips = testLoop.getDefendingBoard().getShips();
@@ -159,9 +105,3 @@ test("The game stops taking input and declares a victor when the game is over", 
   );
   expect(enemyBtns.every((btn) => btn.disabled));
 });
-
-// test("The status of the last turn (hits, misses, sunken ships, tile attacked, and victory) is always displayed", () => {
-//   const testContainer = createDummyDOM();
-//   const testLoop = initGameLoop(createGameBoard, createShip, createPlayer);
-
-// });

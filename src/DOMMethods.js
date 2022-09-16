@@ -1,30 +1,35 @@
-function renderGameBoard(gameLoop, container, type) {
-  const plyrBoard = gameLoop.getAllBoardInfo()[0];
+function renderGameBoard(gameBoardObj, container, isActive) {
+  container.replaceChildren();
+  const boardArr = gameBoardObj.getBoardArr();
+  const attackedIndices = gameBoardObj.getAttackedIndices();
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < boardArr.length; i++) {
     const btn = document.createElement("button");
     btn.classList.add("game-tile");
-    if (plyrBoard[i] === undefined) {
-      btn.classList.add("blank-tile");
-    } else if (type === "activePlayer") {
-      btn.classList.add("ship-segment");
+    const tileStatus = attackedIndices[i];
+    switch (tileStatus) {
+      case true:
+        if (boardArr[i].isSunk()) {
+          btn.classList.add("sunken-ship");
+        } else {
+          btn.classList.add("hit-ship");
+        }
+        btn.disabled = true;
+        break;
+      case false:
+        btn.classList.add("missed-attack");
+        btn.disabled = true;
+        break;
+      case undefined:
+        if (isActive && boardArr[i]) {
+          btn.classList.add("ship-segment");
+        } else {
+          btn.classList.add("blank-tile");
+        }
     }
     btn.dataset.index = i;
     container.append(btn);
   }
-}
-
-function displayAttack(elem, gameLoop) {
-  elem.classList.remove("blank-tile");
-  const defendingBoard = gameLoop.getDefendingBoard();
-  const index = Number(elem.dataset.index);
-  const attackStatus = defendingBoard.getAttackedIndices()[index];
-  if (attackStatus) {
-    elem.classList.add("hit-ship");
-  } else {
-    elem.classList.add("missed-attack");
-  }
-  elem.disabled = true;
 }
 
 function displayShipInfo(container, gameBoard) {
@@ -39,6 +44,10 @@ function getPlayerIndex(gameLoop) {
 }
 
 function displayVictory(container, gameLoop) {
+  const gameState = gameLoop.getGameState();
+  if (gameState !== "game over") {
+    return;
+  }
   const index = getPlayerIndex(gameLoop);
   const winner = index === 0 ? "Player 1" : "Player 2";
   const victoryText = `${winner} has sunk all enemy battleships and won the game!`;
@@ -52,10 +61,4 @@ function disableGameInput(gameBoard) {
   });
 }
 
-export {
-  renderGameBoard,
-  displayAttack,
-  displayShipInfo,
-  displayVictory,
-  disableGameInput
-};
+export { renderGameBoard, displayShipInfo, displayVictory, disableGameInput };
