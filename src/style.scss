@@ -15,6 +15,10 @@ body {
   text-align: center;
 }
 
+.inactive-during-CPU {
+  display: none;
+}
+
 .board-grid {
   display: grid;
   grid-template-columns: repeat(10, $grid-tile-dim);

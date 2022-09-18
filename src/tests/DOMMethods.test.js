@@ -37,12 +37,14 @@ function createDummyDOM() {
   return container;
 }
 
-test("DOM method populates gameboard element with 100 buttons", () => {
+test("DOM method removes all elements and populates gameboard element with 100 buttons", () => {
   const testContainer = createDummyDOM();
   const pBoard = testContainer.querySelector(".player1-board > .board-grid");
   expect(pBoard.querySelectorAll("button").length).toBe(0);
   const testLoop = initGameLoop(createGameBoard, createShip, createPlayer);
   const plyrBoard = testLoop.getAllBoardInfo()[0];
+  renderGameBoard(plyrBoard, pBoard, true);
+  expect(pBoard.querySelectorAll("button").length).toBe(100);
   renderGameBoard(plyrBoard, pBoard, true);
   expect(pBoard.querySelectorAll("button").length).toBe(100);
 });

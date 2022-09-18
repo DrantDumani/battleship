@@ -27,6 +27,9 @@ function renderGameBoard(gameBoardObj, container, isActive) {
           btn.classList.add("blank-tile");
         }
     }
+    if (isActive) {
+      btn.disabled = true;
+    }
     btn.dataset.index = i;
     container.append(btn);
   }
@@ -44,18 +47,18 @@ function getPlayerIndex(gameLoop) {
 }
 
 function displayVictory(container, gameLoop) {
-  const gameState = gameLoop.getGameState();
-  if (gameState !== "game over") {
-    return;
-  }
+  // const gameState = gameLoop.getGameState();
+  // if (gameState !== "game over") {
+  //   return;
+  // }
   const index = getPlayerIndex(gameLoop);
   const winner = index === 0 ? "Player 1" : "Player 2";
   const victoryText = `${winner} has sunk all enemy battleships and won the game!`;
   container.innerText = victoryText;
 }
 
-function disableGameInput(gameBoard) {
-  const gameButtons = gameBoard.querySelectorAll("buttons");
+function disableGameInput() {
+  const gameButtons = document.querySelectorAll(".game-tile");
   gameButtons.forEach((btn) => {
     btn.disabled = true;
   });
