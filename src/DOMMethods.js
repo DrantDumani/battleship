@@ -1,30 +1,38 @@
-function renderGameBoard(gameLoop, container, type) {
-  const plyrBoard = gameLoop.getAllBoardInfo()[0];
+function renderGameBoard(gameBoardObj, container, isActive) {
+  container.replaceChildren();
+  const boardArr = gameBoardObj.getBoardArr();
+  const attackMap = gameBoardObj.getAttackMap();
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < boardArr.length; i++) {
     const btn = document.createElement("button");
     btn.classList.add("game-tile");
-    if (plyrBoard[i] === undefined) {
-      btn.classList.add("blank-tile");
-    } else if (type === "activePlayer") {
-      btn.classList.add("ship-segment");
+    const tileStatus = attackMap.get(i.toString());
+    switch (tileStatus) {
+      case true:
+        if (boardArr[i].isSunk()) {
+          btn.classList.add("sunken-ship");
+        } else {
+          btn.classList.add("hit-ship");
+        }
+        btn.disabled = true;
+        break;
+      case false:
+        btn.classList.add("missed-attack");
+        btn.disabled = true;
+        break;
+      case undefined:
+        if (isActive && boardArr[i]) {
+          btn.classList.add("ship-segment");
+        } else {
+          btn.classList.add("blank-tile");
+        }
+    }
+    if (isActive) {
+      btn.disabled = true;
     }
     btn.dataset.index = i;
     container.append(btn);
   }
-}
-
-function displayAttack(elem, gameLoop) {
-  elem.classList.remove("blank-tile");
-  const defendingBoard = gameLoop.getDefendingBoard();
-  const index = Number(elem.dataset.index);
-  const attackStatus = defendingBoard.getAttackedIndices()[index];
-  if (attackStatus) {
-    elem.classList.add("hit-ship");
-  } else {
-    elem.classList.add("missed-attack");
-  }
-  elem.disabled = true;
 }
 
 function displayShipInfo(container, gameBoard) {
@@ -45,8 +53,21 @@ function displayVictory(container, gameLoop) {
   container.innerText = victoryText;
 }
 
-function disableGameInput(gameBoard) {
-  const gameButtons = gameBoard.querySelectorAll("buttons");
+function displayAtkStatus(container, gameBoard, plyrNum) {
+  const attackMap = gameBoard.getAttackMap();
+  const boardArr = gameBoard.getBoardArr();
+  const lastAttack = Array.from(attackMap.entries()).pop();
+  if (lastAttack[1] && boardArr[lastAttack[0]].isSunk()) {
+    container.textContent += `Player ${plyrNum} has sunk an enemy battleship! `;
+  } else if (lastAttack[1]) {
+    container.textContent += `Player ${plyrNum} attacks! It's a hit! `;
+  } else {
+    container.textContent += `Player ${plyrNum} attacks! And missed! `;
+  }
+}
+
+function disableGameInput() {
+  const gameButtons = document.querySelectorAll(".game-tile");
   gameButtons.forEach((btn) => {
     btn.disabled = true;
   });
@@ -54,8 +75,8 @@ function disableGameInput(gameBoard) {
 
 export {
   renderGameBoard,
-  displayAttack,
   displayShipInfo,
   displayVictory,
+  displayAtkStatus,
   disableGameInput
 };

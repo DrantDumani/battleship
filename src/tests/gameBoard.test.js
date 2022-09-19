@@ -44,12 +44,13 @@ test("Gameboard can receive attacks and determine whether a ship was hit or not"
 
 test("Gameboard logs all successful and unsuccessful attacks a player makes", () => {
   const testBoard = createGameBoard();
-  expect(testBoard.getAttackedIndices()).toEqual({});
+  const attackMap = testBoard.getAttackMap();
+  expect(attackMap.get(80)).toEqual(undefined);
   testBoard.receiveAttack(80);
-  expect(testBoard.getAttackedIndices()).toEqual({ 80: false });
+  expect(attackMap.get(80)).toEqual(false);
   testBoard.placeShip(50, 2, createShip);
   testBoard.receiveAttack(51);
-  expect(testBoard.getAttackedIndices()).toEqual({ 80: false, 51: true });
+  expect(attackMap.get(51)).toEqual(true);
 });
 
 test("Players cannot attack a tile that has been previously attacked", () => {

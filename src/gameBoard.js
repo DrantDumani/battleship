@@ -1,7 +1,8 @@
 function createGameBoard() {
   const board = [];
   const ships = [];
-  const attackedIndices = {};
+  // const attackedIndices = {};
+  const attackMap = new Map();
   for (let i = 0; i < 100; i++) {
     board[i] = false;
   }
@@ -26,10 +27,10 @@ function createGameBoard() {
     ships.push(ship);
   };
 
-  const getAttackedIndices = () => attackedIndices;
+  const getAttackMap = () => attackMap;
 
   const receiveAttack = (index) => {
-    if (attackedIndices[index] !== undefined) {
+    if (attackMap.get(index) !== undefined) {
       throw new Error("Cannot attack the same tile twice");
     }
     const ship = board[index];
@@ -37,7 +38,7 @@ function createGameBoard() {
       ship.hit(index);
     }
     const hit = !!board[index];
-    attackedIndices[index] = hit;
+    attackMap.set(index, hit);
   };
 
   const allShipsSunk = () => ships.every((ship) => ship.isSunk());
@@ -46,7 +47,7 @@ function createGameBoard() {
     getBoardArr,
     getShips,
     placeShip,
-    getAttackedIndices,
+    getAttackMap,
     receiveAttack,
     allShipsSunk
   };

@@ -15,8 +15,32 @@ body {
   text-align: center;
 }
 
+.inactive-during-CPU {
+  display: none;
+}
+
 .board-grid {
   display: grid;
   grid-template-columns: repeat(10, $grid-tile-dim);
   grid-template-rows: repeat(10, $grid-tile-dim);
+}
+
+.blank-tile {
+  background-color: #fff;
+}
+
+.hit-ship {
+  background-color: #f00;
+}
+
+.sunken-ship {
+  background-color: rgb(246, 255, 0);
+}
+
+.ship-segment {
+  background-color: #0f0;
+}
+
+.missed-attack {
+  background-color: #000;
 }
