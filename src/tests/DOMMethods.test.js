@@ -10,7 +10,8 @@ import {
   renderGameBoard,
   displayShipInfo,
   displayVictory,
-  disableGameInput
+  disableGameInput,
+  displayAtkStatus
 } from "../DOMMethods";
 
 function createDummyDOM() {
@@ -75,8 +76,8 @@ test("The game will always display how many ships a player has remaining.", () =
   );
   displayShipInfo(shipInfoContainer, defendingBoard);
   expect(shipInfoContainer.innerText).toBe(5);
-  defendingBoard.receiveAttack(41);
-  defendingBoard.receiveAttack(42);
+  defendingBoard.receiveAttack("41");
+  defendingBoard.receiveAttack("42");
   displayShipInfo(shipInfoContainer, defendingBoard);
   expect(shipInfoContainer.innerText).toBe(4);
 });
@@ -106,4 +107,25 @@ test("The game stops taking input and declares a victor when the game is over", 
     "Player 1 has sunk all enemy battleships and won the game!"
   );
   expect(enemyBtns.every((btn) => btn.disabled));
+});
+
+test("The game displays the status of the most recent turn", () => {
+  const testContainer = createDummyDOM();
+  const statContainer = testContainer.querySelector(".current-turn-status");
+  const testLoop = initGameLoop(createGameBoard, createShip, createPlayer);
+  const enemyBoard = testLoop.getDefendingBoard();
+  const enemyBoardArr = enemyBoard.getBoardArr();
+  const enemyAttackMap = enemyBoard.getAttackMap();
+  const index = Math.floor(Math.random() * enemyBoardArr.length).toString();
+  enemyBoard.receiveAttack(index);
+  displayAtkStatus(statContainer, enemyBoard, 1);
+  if (enemyAttackMap.get(index) === false) {
+    expect(statContainer.textContent).toMatch("Player 1 attacks! And missed!");
+  } else if (enemyAttackMap.get(index) && enemyBoardArr[index].isSunk()) {
+    expect(statContainer.textContent).toMatch(
+      "Player 1 has sunk an enemy battleship!"
+    );
+  } else {
+    expect(statContainer.textContent).toMatch("Player 1 attacks! It's a hit!");
+  }
 });

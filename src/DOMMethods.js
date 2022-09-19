@@ -1,12 +1,12 @@
 function renderGameBoard(gameBoardObj, container, isActive) {
   container.replaceChildren();
   const boardArr = gameBoardObj.getBoardArr();
-  const attackedIndices = gameBoardObj.getAttackedIndices();
+  const attackMap = gameBoardObj.getAttackMap();
 
   for (let i = 0; i < boardArr.length; i++) {
     const btn = document.createElement("button");
     btn.classList.add("game-tile");
-    const tileStatus = attackedIndices[i];
+    const tileStatus = attackMap.get(i.toString());
     switch (tileStatus) {
       case true:
         if (boardArr[i].isSunk()) {
@@ -47,14 +47,23 @@ function getPlayerIndex(gameLoop) {
 }
 
 function displayVictory(container, gameLoop) {
-  // const gameState = gameLoop.getGameState();
-  // if (gameState !== "game over") {
-  //   return;
-  // }
   const index = getPlayerIndex(gameLoop);
   const winner = index === 0 ? "Player 1" : "Player 2";
   const victoryText = `${winner} has sunk all enemy battleships and won the game!`;
   container.innerText = victoryText;
+}
+
+function displayAtkStatus(container, gameBoard, plyrNum) {
+  const attackMap = gameBoard.getAttackMap();
+  const boardArr = gameBoard.getBoardArr();
+  const lastAttack = Array.from(attackMap.entries()).pop();
+  if (lastAttack[1] && boardArr[lastAttack[0]].isSunk()) {
+    container.textContent += `Player ${plyrNum} has sunk an enemy battleship! `;
+  } else if (lastAttack[1]) {
+    container.textContent += `Player ${plyrNum} attacks! It's a hit! `;
+  } else {
+    container.textContent += `Player ${plyrNum} attacks! And missed! `;
+  }
 }
 
 function disableGameInput() {
@@ -64,4 +73,10 @@ function disableGameInput() {
   });
 }
 
-export { renderGameBoard, displayShipInfo, displayVictory, disableGameInput };
+export {
+  renderGameBoard,
+  displayShipInfo,
+  displayVictory,
+  displayAtkStatus,
+  disableGameInput
+};

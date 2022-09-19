@@ -6,7 +6,8 @@ import {
   renderGameBoard,
   disableGameInput,
   displayShipInfo,
-  displayVictory
+  displayVictory,
+  displayAtkStatus
 } from "./DOMMethods";
 import "./style.scss";
 
@@ -27,6 +28,13 @@ function displayPlayerShipInfo(boardInfo) {
   displayShipInfo(p2ShipInfo, boardInfo[1]);
 }
 
+function displayTurnInfo(gameBoardInfo) {
+  const container = document.querySelector(".current-turn-status");
+  container.textContent = "";
+  displayAtkStatus(container, gameBoardInfo[1], 1);
+  displayAtkStatus(container, gameBoardInfo[0], 2);
+}
+
 // CPU game only
 function handleClick(target, gameLoop) {
   const index = target.dataset.index;
@@ -34,6 +42,7 @@ function handleClick(target, gameLoop) {
   const boardInfo = gameLoop.getAllBoardInfo();
   renderPlayerBoards(boardInfo);
   displayPlayerShipInfo(boardInfo);
+  displayTurnInfo(boardInfo);
   if (gameLoop.getGameState() === "game over") {
     const statusContainer = document.querySelector(".current-turn-status");
     displayVictory(statusContainer, mainGameLoop);
