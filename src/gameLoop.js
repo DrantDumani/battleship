@@ -38,7 +38,7 @@ function initGameLoop(boardFn, shipFn, plyrFn) {
 
   const takeCPUTurn = () => {
     const attack = currentPlayer.randomAttack();
-    defendingBoard.receiveAttack(attack.toString());
+    defendingBoard.receiveAttack(attack);
     if (checkGameOver()) {
       gameState = "game over";
       return;

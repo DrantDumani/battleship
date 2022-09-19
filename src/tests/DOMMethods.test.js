@@ -76,8 +76,8 @@ test("The game will always display how many ships a player has remaining.", () =
   );
   displayShipInfo(shipInfoContainer, defendingBoard);
   expect(shipInfoContainer.innerText).toBe(5);
-  defendingBoard.receiveAttack("41");
-  defendingBoard.receiveAttack("42");
+  defendingBoard.receiveAttack(41);
+  defendingBoard.receiveAttack(42);
   displayShipInfo(shipInfoContainer, defendingBoard);
   expect(shipInfoContainer.innerText).toBe(4);
 });
@@ -116,7 +116,7 @@ test("The game displays the status of the most recent turn", () => {
   const enemyBoard = testLoop.getDefendingBoard();
   const enemyBoardArr = enemyBoard.getBoardArr();
   const enemyAttackMap = enemyBoard.getAttackMap();
-  const index = Math.floor(Math.random() * enemyBoardArr.length).toString();
+  const index = Math.floor(Math.random() * enemyBoardArr.length);
   enemyBoard.receiveAttack(index);
   displayAtkStatus(statContainer, enemyBoard, 1);
   if (enemyAttackMap.get(index) === false) {

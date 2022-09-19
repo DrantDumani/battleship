@@ -1,8 +1,23 @@
-function createShip(startInd, length) {
+function horizontalAlign(start, length, arr) {
+  for (let i = 0; i < length; i++) {
+    arr[i] = start + i;
+  }
+}
+
+function verticalAlign(start, length, arr) {
+  for (let i = 0; i < length; i++) {
+    arr[i] = start + i * 10;
+  }
+}
+
+function createShip(startInd, length, alignment) {
   const hitIndices = [];
   const shipIndices = [];
-  for (let i = 0; i < length; i++) {
-    shipIndices[i] = startInd + i;
+
+  if (alignment === "horizontal") {
+    horizontalAlign(startInd, length, shipIndices);
+  } else if (alignment === "vertical") {
+    verticalAlign(startInd, length, shipIndices);
   }
 
   const getShipLocation = () => shipIndices;
