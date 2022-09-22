@@ -22,23 +22,29 @@ function initGameLoop(boardFn, shipFn, plyrFn) {
   };
   const getAllBoardInfo = () => [plyr1Board, plyr2Board];
 
-  const setShips = [
-    { length: 5, index: 1 },
-    { length: 4, index: 11 },
-    { length: 3, index: 21 },
-    { length: 3, index: 31 },
-    { length: 2, index: 41 }
-  ];
+  // const setShips = [
+  //   { length: 5, index: 1 },
+  //   { length: 4, index: 11 },
+  //   { length: 3, index: 21 },
+  //   { length: 3, index: 31 },
+  //   { length: 2, index: 41 }
+  // ];
 
-  for (const ship of setShips) {
-    const { length, index } = ship;
-    plyr1Board.placeShip(index, length, shipFn);
-    plyr2Board.placeShip(index, length, shipFn);
+  // for (const ship of setShips) {
+  //   const { length, index } = ship;
+  //   plyr1Board.placeShip(index, length, shipFn);
+  //   plyr2Board.placeShip(index, length, shipFn);
+  // }
+
+  const shipLengths = [5, 4, 3, 3, 2];
+  for (const length of shipLengths) {
+    plyr1Board.randomPlacement(length, shipFn);
+    plyr2Board.randomPlacement(length, shipFn);
   }
 
   const takeCPUTurn = () => {
     const attack = currentPlayer.randomAttack();
-    defendingBoard.receiveAttack(attack.toString());
+    defendingBoard.receiveAttack(attack);
     if (checkGameOver()) {
       gameState = "game over";
       return;

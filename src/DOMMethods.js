@@ -6,7 +6,7 @@ function renderGameBoard(gameBoardObj, container, isActive) {
   for (let i = 0; i < boardArr.length; i++) {
     const btn = document.createElement("button");
     btn.classList.add("game-tile");
-    const tileStatus = attackMap.get(i.toString());
+    const tileStatus = attackMap.get(i);
     switch (tileStatus) {
       case true:
         if (boardArr[i].isSunk()) {

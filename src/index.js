@@ -38,7 +38,7 @@ function displayTurnInfo(gameBoardInfo) {
 // CPU game only
 function handleClick(target, gameLoop) {
   const index = target.dataset.index;
-  gameLoop.takeTurn(index);
+  gameLoop.takeTurn(Number(index));
   const boardInfo = gameLoop.getAllBoardInfo();
   renderPlayerBoards(boardInfo);
   displayPlayerShipInfo(boardInfo);
