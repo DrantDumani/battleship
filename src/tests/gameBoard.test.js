@@ -13,10 +13,23 @@ test("Ships cannot overlap each other or have any indices placed off the board",
   const testBoard = createGameBoard();
   expect(() => {
     testBoard.placeShip(101, 1, createShip);
-  }).toThrow(/Horizontal ship positions cannot be placed off the board/);
-  expect(() => {
-    testBoard.placeShip(19, 3, createShip);
-  }).toThrow(/Horizontal ship positions cannot be placed off the board/);
+  }).toThrow(/Ship positions cannot be placed off the board/);
+});
+
+test("Gameboard can place ships at random indices without overlapping or placing ships off the board", () => {
+  const testBoard = createGameBoard();
+  testBoard.randomPlacement(4, createShip);
+  testBoard.randomPlacement(4, createShip);
+  testBoard.randomPlacement(4, createShip);
+  testBoard.randomPlacement(4, createShip);
+  testBoard.randomPlacement(4, createShip);
+  const shipPlacements = testBoard.getShips();
+  expect(shipPlacements.length).not.toBe(0);
+  const shipMap = new Map();
+  for (let i = 0; i < shipPlacements.length; i++) {
+    shipMap.set(i, shipPlacements[i]);
+  }
+  expect(shipPlacements.length).toBe(shipMap.size);
 });
 
 test("Gameboard can receive attacks and determine whether a ship was hit or not", () => {
@@ -69,4 +82,20 @@ test("Gameboard can tell when all of its ships have been sunk.", () => {
   expect(testBoard.allShipsSunk()).toBe(false);
   testBoard.receiveAttack(22);
   expect(testBoard.allShipsSunk()).toBe(true);
+});
+
+test("Ships can change alignment as long as they remain on the board and don't overlap anything.", () => {
+  const testBoard = createGameBoard();
+  testBoard.placeShip(1, 5, createShip, "horizontal");
+  testBoard.swapShipAlign(testBoard.getShips()[0], createShip);
+  expect(testBoard.getShips()[0].getShipLocation()).toEqual([
+    1, 11, 21, 31, 41
+  ]);
+  expect(testBoard.getBoardArr()[2]).toBe(false);
+  testBoard.placeShip(9, 3, createShip, "vertical");
+  testBoard.swapShipAlign(testBoard.getShips()[1], createShip);
+  expect(testBoard.getShips()[1].getShipLocation()).toEqual([9, 19, 29]);
+  testBoard.placeShip(30, 2, createShip, "vertical");
+  testBoard.swapShipAlign(testBoard.getShips()[2], createShip);
+  expect(testBoard.getShips()[2].getShipLocation()).toEqual([30, 40]);
 });

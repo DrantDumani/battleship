@@ -28,9 +28,10 @@ function createShip(startInd, length, alignment) {
     hitIndices.push(hitTile);
   };
 
-  const isSunk = () => hitIndices.length === length;
+  const getAlignment = () => alignment;
 
-  return { hit, isSunk, getShipLocation };
+  const isSunk = () => hitIndices.length === length;
+  return { hit, isSunk, getShipLocation, getAlignment };
 }
 
 export default createShip;
